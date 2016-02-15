@@ -10,6 +10,8 @@
 
 from os.path import abspath, exists
 import tornado
+import six
+import logging
 from concurrent.futures import ThreadPoolExecutor, Future
 import functools
 
@@ -67,7 +69,7 @@ class ServerParameters(object):
 
     @security_key.setter
     def security_key(self, key):
-        if isinstance(key, unicode):
+        if isinstance(key, six.text_type):
             key = key.encode('utf-8')
         self._security_key = key
 
@@ -258,5 +260,5 @@ class ThreadPool(object):
 
     def cleanup(self):
         if self.pool:
-            print "Joining threads...."
+            logging.info("Joining threads....")
             self.pool.shutdown()

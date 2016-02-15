@@ -10,7 +10,10 @@
 
 from unittest import TestCase
 import mock
-from StringIO import StringIO
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
 import sys
 import optparse
 

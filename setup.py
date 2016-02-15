@@ -17,9 +17,8 @@ import logging
 
 
 tests_require = [
-    "simplejson>=2.1.6,<2.2.0",
-    "redis==2.4.9",
-    "gevent",
+    "redis==2.10.5",
+    "gevent==1.1rc3",
     "tornado-pyvows>=0.6.0",
     "coverage",
     "mock==1.0.1",
@@ -99,7 +98,6 @@ http://<thumbor-server>/300x200/smart/s.glbimg.com/et/bb/f/original/2011/03/24/V
 
         install_requires=[
             "tornado>=4.1.0,<5.0.0",
-            "pyCrypto>=2.1.0",
             "pycurl>=7.19.0,<7.20.0",
             "Pillow>=2.7.0,<3.0.0",
             "derpconf>=0.2.0",
@@ -110,6 +108,7 @@ http://<thumbor-server>/300x200/smart/s.glbimg.com/et/bb/f/original/2011/03/24/V
             "futures",
             "argparse",
             "pytz",
+            "six",
         ],
 
         extras_require={

@@ -15,7 +15,12 @@ from unittest import TestCase as PythonTestCase
 import urllib
 import mimetypes
 from os.path import exists, realpath, dirname, join
-import cStringIO
+
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
+
 import mock
 
 import numpy as np
@@ -70,11 +75,11 @@ def to_be_the_same_as(topic, expected):
 
 @create_assertions
 def to_be_similar_to(topic, expected):
-    im = Image.open(cStringIO.StringIO(topic))
+    im = Image.open(StringIO(topic))
     im = im.convert('RGBA')
     topic_contents = np.array(im)
 
-    im = Image.open(cStringIO.StringIO(expected))
+    im = Image.open(StringIO(expected))
     im = im.convert('RGBA')
     expected_contents = np.array(im)
 
@@ -83,25 +88,25 @@ def to_be_similar_to(topic, expected):
 
 @create_assertions
 def to_be_webp(topic):
-    im = Image.open(cStringIO.StringIO(topic))
+    im = Image.open(StringIO(topic))
     return im.format.lower() == 'webp'
 
 
 @create_assertions
 def to_be_png(topic):
-    im = Image.open(cStringIO.StringIO(topic))
+    im = Image.open(StringIO(topic))
     return im.format.lower() == 'png'
 
 
 @create_assertions
 def to_be_gif(topic):
-    im = Image.open(cStringIO.StringIO(topic))
+    im = Image.open(StringIO(topic))
     return im.format.lower() == 'gif'
 
 
 @create_assertions
 def to_be_jpeg(topic):
-    im = Image.open(cStringIO.StringIO(topic))
+    im = Image.open(StringIO(topic))
     return im.format.lower() == 'jpeg'
 
 
@@ -260,11 +265,11 @@ class FilterTestCase(PythonTestCase):
         im = Image.fromarray(image)
         path = '/tmp/debug_image_%s.jpg' % random.randint(1, 10000)
         im.save(path, 'JPEG')
-        print 'The debug image was in %s.' % path
+        print('The debug image was in %s.' % path)
 
     def debug_size(self, image):
         im = Image.fromarray(image)
-        print "Image dimensions are %dx%d (shape is %s)" % (im.size[0], im.size[1], image.shape)
+        print("Image dimensions are %dx%d (shape is %s)" % (im.size[0], im.size[1], image.shape))
 
 
 class DetectorTestCase(PythonTestCase):

@@ -10,7 +10,10 @@
 
 import sys
 import optparse
-from urllib import quote
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib import quote
 
 from thumbor import __version__
 from libthumbor import CryptoURL

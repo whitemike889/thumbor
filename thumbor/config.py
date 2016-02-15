@@ -13,6 +13,7 @@ import tempfile
 
 import derpconf.config as config
 from derpconf.config import Config
+import six
 
 from thumbor import __version__
 
@@ -355,7 +356,7 @@ def generate_config():
 
 
 def format_value(value):
-    if isinstance(value, basestring):
+    if isinstance(value, six.string_types):
         return "'%s'" % value
     if isinstance(value, (tuple, list, set)):
         representation = '[\n'
