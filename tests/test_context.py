@@ -61,6 +61,41 @@ class ContextTestCase(TestCase):
         expect(ctx.modules).not_to_be_null()
         expect(ctx.modules.importer).to_equal(importer)
 
+    def test_should_have_webp_header(self):
+        cfg = Config(
+            ALLOWED_HEADERS=['thumbor.headers.accept_webp'],
+        )
+        importer = Importer(cfg)
+        importer.import_modules()
+        ctx = Context(config=cfg, importer=importer)
+        request = mock.Mock(
+            path='/test.jpg',
+            headers={
+                'Accept': 'image/webp',
+            }
+        )
+        ctx.request = RequestParameters(request=request, image='/test.jpg')
+        ctx.detect_headers()
+        expect(ctx.allowed_headers[0].should_run).to_equal(True)
+
+    def test_should_not_have_webp_header(self):
+        cfg = Config(
+            ALLOWED_HEADERS=['thumbor.headers.accept_webp'],
+        )
+        importer = Importer(cfg)
+        importer.import_modules()
+        ctx = Context(config=cfg, importer=importer)
+        request = mock.Mock(
+            path='/test.jpg',
+            headers={
+                'Accept': '*/*',
+            }
+        )
+        ctx.request = RequestParameters(request=request, image='/test.jpg')
+        ctx.detect_headers()
+        expect(ctx.allowed_headers).to_be_empty()
+
+
 
 class ServerParametersTestCase(TestCase):
     def test_can_create_server_parameters(self):

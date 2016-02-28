@@ -51,6 +51,14 @@ class BaseStorage(object):
     def last_updated(self):
         raise NotImplementedError()
 
+    def get_headers_segments(self):
+        headers_segments = []
+        for header_parser in self.context.allowed_headers:
+            headers_segments.append(
+                header_parser.get_path_segment()
+            )
+        return headers_segments
+
     def ensure_dir(self, path):
         if not exists(path):
             try:

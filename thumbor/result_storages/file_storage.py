@@ -26,10 +26,6 @@ from . import ResultStorageResult
 class Storage(BaseStorage):
     PATH_FORMAT_VERSION = 'v2'
 
-    @property
-    def is_auto_webp(self):
-        return self.context.config.AUTO_WEBP and self.context.request.accepts_webp
-
     def put(self, bytes):
         file_abspath = self.normalize_path(self.context.request.url)
         if not self.validate_path(file_abspath):
@@ -74,12 +70,17 @@ class Storage(BaseStorage):
             callback(result)
 
     def validate_path(self, path):
-        return abspath(path).startswith(self.context.config.RESULT_STORAGE_FILE_STORAGE_ROOT_PATH)
+        return abspath(path).startswith(
+            self.context.config.RESULT_STORAGE_FILE_STORAGE_ROOT_PATH
+        )
 
     def normalize_path(self, path):
-        path_segments = [self.context.config.RESULT_STORAGE_FILE_STORAGE_ROOT_PATH.rstrip('/'), Storage.PATH_FORMAT_VERSION, ]
-        if self.is_auto_webp:
-            path_segments.append("webp")
+        path_segments = [
+            self.context.config.
+            RESULT_STORAGE_FILE_STORAGE_ROOT_PATH.rstrip('/'),
+            Storage.PATH_FORMAT_VERSION,
+        ]
+        path_segments = path_segments + self.get_headers_segments()
 
         path_segments.extend([self.partition(path), path.lstrip('/'), ])
 

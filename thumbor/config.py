@@ -51,6 +51,10 @@ Config.define('WEBP_QUALITY', None, 'Quality index used for generated WebP image
               'JPEG quality will be used.', 'Imaging')
 Config.define('AUTO_WEBP', False, 'Specifies whether WebP format should be used automatically if the request accepts it '
               '(via Accept header)', 'Imaging')
+Config.define(
+    'ALLOWED_HEADERS',
+    ['thumbor.headers.accept_webp', ],
+    'Specifies headers to be added to the request', 'Imaging')
 Config.define('SVG_DPI', 150,
               'Specify the ratio between 1in and 1px for SVG images. This is only used when'
               'rasterizing SVG images having their size units in cm or inches.', 'Imaging')

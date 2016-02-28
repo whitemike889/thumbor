@@ -41,11 +41,18 @@ class Context:
             self.modules = None
             self.metrics = Metrics(config)
 
+        self.allowed_headers = []
         self.filters_factory = FiltersFactory(self.modules.filters if self.modules else [])
         self.request_handler = request_handler
         self.statsd_client = self.metrics  # TODO statsd_client is deprecated, remove me on next minor version bump
         self.thread_pool = ThreadPool.instance(getattr(config, 'ENGINE_THREADPOOL_SIZE', 0))
         self.headers = {}
+
+    def detect_headers(self):
+        for header_parser in self.modules.allowed_headers:
+            parser = header_parser.Header(self.request.headers)
+            if parser.should_run:
+                self.allowed_headers.append(parser)
 
 
 class ServerParameters(object):
@@ -173,13 +180,12 @@ class RequestParameters:
         self.prevent_result_storage = False
         self.unsafe = unsafe == 'unsafe' or unsafe is True
         self.format = None
-        self.accepts_webp = accepts_webp
+        self.headers = None
         self.max_bytes = None
         self.max_age = max_age
 
         if request:
-            self.url = request.path
-            self.accepts_webp = 'image/webp' in request.headers.get('Accept', '')
+            self.headers = request.headers
 
     def int_or_0(self, value):
         return 0 if value is None else int(value)
@@ -215,6 +221,7 @@ class ContextImporter:
         self.filters = importer.filters
         self.optimizers = importer.optimizers
         self.url_signer = importer.url_signer
+        self.allowed_headers = importer.allowed_headers
 
 
 class ThreadPool(object):

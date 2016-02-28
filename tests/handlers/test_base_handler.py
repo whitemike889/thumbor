@@ -423,6 +423,8 @@ class ImageOperationsWithAutoWebPTestCase(BaseImagingTestCase):
         expect(response.code).to_equal(200)
         expect(response.body).to_be_gif()
 
+    from nose_focus import focus
+    @focus
     def test_shouldnt_convert_cmyk_if_format_specified(self):
         response = self.get_as_webp('/unsafe/filters:format(gif)/image.jpg')
         expect(response.code).to_equal(200)

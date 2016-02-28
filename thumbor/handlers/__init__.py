@@ -56,6 +56,7 @@ class BaseHandler(tornado.web.RequestHandler):
     @gen.coroutine
     def execute_image_operations(self):
         self.context.request.quality = None
+        self.context.detect_headers()
 
         req = self.context.request
         conf = self.context.config
@@ -230,13 +231,15 @@ class BaseHandler(tornado.web.RequestHandler):
                 buffer = result
             image_extension = EXTENSION.get(BaseEngine.get_mimetype(buffer), '.jpg')
         else:
+            for header_parser in context.allowed_headers:
+                header_parser.set_format(context)
             image_extension = context.request.format
             if image_extension is not None:
                 image_extension = '.%s' % image_extension
                 logger.debug('Image format specified as %s.' % image_extension)
-            elif self.is_webp(context):
-                image_extension = '.webp'
-                logger.debug('Image format set by AUTO_WEBP as %s.' % image_extension)
+            # elif self.is_webp(context):
+            #     image_extension = '.webp'
+            #     logger.debug('Image format set by AUTO_WEBP as %s.' % image_extension)
             else:
                 image_extension = context.request.engine.extension
                 logger.debug('No image format specified. Retrieving from the image extension: %s.' % image_extension)

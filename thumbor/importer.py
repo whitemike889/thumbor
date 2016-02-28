@@ -38,6 +38,7 @@ class Importer:
         self.filters = []
         self.optimizers = []
         self.error_handler_class = None
+        self.allowed_headers = []
 
     def import_class(self, name, get_module=False):
         return import_class(name, get_module)
@@ -67,6 +68,8 @@ class Importer:
         if self.config.USE_CUSTOM_ERROR_HANDLING:
             self.import_item('ERROR_HANDLER_MODULE', 'ErrorHandler')
             self.error_handler_class = self.error_handler_module
+        if self.config.ALLOWED_HEADERS:
+            self.import_item('ALLOWED_HEADERS', is_multiple=True)
 
     def import_item(self, config_key=None, class_name=None, is_multiple=False, item_value=None, ignore_errors=False):
         if item_value is None:
