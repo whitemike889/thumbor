@@ -340,6 +340,10 @@ class Engine(BaseEngine):
             self.image = image
         return image
 
+    def can_auto_convert_png_to_jpg(self, *args, **kwargs):
+        can_convert = super(Engine, self).can_auto_convert_png_to_jpg(*args, **kwargs)
+        return can_convert and 'A' not in self.image.mode
+
     def paste(self, other_engine, pos, merge=True):
         if merge and not FILTERS_AVAILABLE:
             raise RuntimeError(

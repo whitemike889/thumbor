@@ -122,5 +122,6 @@ sample_images:
 	convert tests/fixtures/filters/source.jpg -gamma 1.1,1.02,1.04 tests/fixtures/filters/rgb.jpg
 	curl -s https://upload.wikimedia.org/wikipedia/commons/8/81/Wikimedia-logo.svg -o tests/fixtures/filters/watermark.svg
 	convert tests/fixtures/filters/watermark.svg -transparent white -resize 30x30 tests/fixtures/filters/watermark.png
+	cp tests/fixtures/filters/watermark.png tests/fixtures/images/watermark.png
 	# the watermark filter's logic is too complicated to reproduce with IM, the watermark test images can't be generated here
 	# similarly, the noise, colorize and fill filters generate output too unique to be reproduce with IM and can't be generated here
