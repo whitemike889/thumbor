@@ -21,6 +21,11 @@ try:
 except:
     cv = None
 
+try:
+    import numpy
+except:
+    numpy = None
+
 from thumbor.engines import BaseEngine
 from thumbor.engines.extensions.pil import GifWriter
 from thumbor.utils import logger, deprecated, EXTENSION
@@ -340,9 +345,23 @@ class Engine(BaseEngine):
             self.image = image
         return image
 
+    def has_transparency(self):
+        has_transparency = 'A' in self.image.mode or 'transparency' in self.image.info
+        if has_transparency and numpy:
+            # If has transapency and have numpy
+            # check if any pixel in Alpha layer is 255(opaque)
+            img = self.image.convert('RGBA')
+            im = numpy.array(img)
+            alpha = im[:, :, -1]  # just alpha layer
+            has_transparency = alpha.min() < 255
+        return has_transparency
+
     def can_auto_convert_png_to_jpg(self, *args, **kwargs):
         can_convert = super(Engine, self).can_auto_convert_png_to_jpg(*args, **kwargs)
-        return can_convert and 'A' not in self.image.mode
+
+        if not can_convert:
+            return can_convert
+        return not self.has_transparency()
 
     def paste(self, other_engine, pos, merge=True):
         if merge and not FILTERS_AVAILABLE:
