@@ -361,7 +361,13 @@ class Engine(BaseEngine):
 
         if not can_convert:
             return can_convert
-        return not self.has_transparency()
+
+        if not self.has_transparency():
+            bytes_jpg = self.read(extension='.jpg')
+            bytes_png = self.read(extension='.png')
+            is_smaller = len(bytes_jpg) < len(bytes_png)
+            return is_smaller
+        return False
 
     def paste(self, other_engine, pos, merge=True):
         if merge and not FILTERS_AVAILABLE:
