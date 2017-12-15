@@ -14,6 +14,7 @@ import logging
 import logging.config
 import schedule
 import warnings
+import six
 
 import os
 import socket
@@ -77,7 +78,10 @@ def validate_config(config, server_parameters):
     if server_parameters.security_key is None:
         server_parameters.security_key = config.SECURITY_KEY
 
-    if not isinstance(server_parameters.security_key, basestring):
+    if isinstance(server_parameters.security_key, six.string_types):
+        server_parameters.security_key = server_parameters.security_key.encode('utf-8')
+
+    if not isinstance(server_parameters.security_key, six.binary_type):
         raise RuntimeError(
             'No security key was found for this instance of thumbor. ' +
             'Please provide one using the conf file or a security key file.')

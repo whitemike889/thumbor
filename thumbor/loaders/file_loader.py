@@ -25,7 +25,7 @@ def load(context, path, callback):
 
     if inside_root_path and exists(file_path):
 
-        with open(file_path, 'r') as f:
+        with open(file_path, 'rb') as f:
             stats = fstat(f.fileno())
 
             result.successful = True

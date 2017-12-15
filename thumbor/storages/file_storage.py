@@ -32,7 +32,7 @@ class Storage(storages.BaseStorage):
 
         self.ensure_dir(file_dir_abspath)
 
-        with open(temp_abspath, 'w') as _file:
+        with open(temp_abspath, 'wb') as _file:
             _file.write(bytes)
 
         logger.debug('moving tempfile %s to %s...' % (temp_abspath, file_abspath))
@@ -54,7 +54,7 @@ class Storage(storages.BaseStorage):
 
         crypto_path = '%s.txt' % splitext(file_abspath)[0]
         temp_abspath = "%s.%s" % (crypto_path, str(uuid4()).replace('-', ''))
-        with open(temp_abspath, 'w') as _file:
+        with open(temp_abspath, 'wb') as _file:
             _file.write(self.context.server.security_key)
 
         move(temp_abspath, crypto_path)
@@ -71,7 +71,7 @@ class Storage(storages.BaseStorage):
         file_dir_abspath = dirname(file_abspath)
         self.ensure_dir(file_dir_abspath)
 
-        with open(temp_abspath, 'w') as _file:
+        with open(temp_abspath, 'wb') as _file:
             _file.write(dumps(data))
 
         move(temp_abspath, path)
@@ -86,7 +86,7 @@ class Storage(storages.BaseStorage):
             if not resource_available:
                 callback(None)
             else:
-                with open(self.path_on_filesystem(path), 'r') as f:
+                with open(self.path_on_filesystem(path), 'rb') as f:
                     callback(f.read())
 
         self.exists(None, file_exists, path_on_filesystem=abs_path)
@@ -99,7 +99,7 @@ class Storage(storages.BaseStorage):
         if not exists(crypto_file):
             callback(None)
         else:
-            with open(crypto_file, 'r') as crypto_f:
+            with open(crypto_file, 'rb') as crypto_f:
                 callback(crypto_f.read())
 
     @return_future
@@ -111,7 +111,7 @@ class Storage(storages.BaseStorage):
             if not resource_available:
                 callback(None)
             else:
-                callback(loads(open(path, 'r').read()))
+                callback(loads(open(path, 'rb').read()))
         self.exists(None, file_exists, path_on_filesystem=path)
 
     def path_on_filesystem(self, path):

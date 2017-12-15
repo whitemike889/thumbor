@@ -28,7 +28,7 @@ class BlacklistHandler(ContextHandler):
     @tornado.gen.coroutine
     def put(self):
         blacklist = yield self.get_blacklist_contents()
-        blacklist += self.request.query + "\n"
+        blacklist += self.request.query.encode('utf-8') + b"\n"
         logger.debug('Adding to blacklist: %s' % self.request.query)
         self.context.modules.storage.put('blacklist.txt', blacklist)
         self.set_status(200)

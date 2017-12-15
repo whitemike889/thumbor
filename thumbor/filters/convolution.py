@@ -21,5 +21,5 @@ class Filter(BaseFilter):
     def convolution(self, matrix, columns, should_normalize=True):
         matrix = tuple(matrix.split(';'))
         mode, data = self.engine.image_data_as_rgb()
-        imgdata = _convolution.apply(mode, data, self.engine.size[0], self.engine.size[1], matrix, columns, should_normalize)
+        imgdata = _convolution.apply(mode.encode('utf-8'), data, self.engine.size[0], self.engine.size[1], matrix, columns, should_normalize)
         self.engine.set_image_data(imgdata)

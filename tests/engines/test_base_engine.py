@@ -91,7 +91,7 @@ class BaseEngineTestCase(TestCase):
         expect(self.engine).to_be_instance_of(BaseEngine)
 
     def test_convert_svg_to_png(self):
-        buffer = """<svg width="10px" height="20px" viewBox="0 0 10 20"
+        buffer = b"""<svg width="10px" height="20px" viewBox="0 0 10 20"
                     xmlns="http://www.w3.org/2000/svg">
                         <rect width="100%" height="10" x="0" y="0"/>
                     </svg>"""
@@ -99,11 +99,11 @@ class BaseEngineTestCase(TestCase):
         expect(self.engine.extension).to_equal('.png')
 
     def test_convert_svg_with_xml_preamble_to_png(self):
-        buffer = """<?xml version="1.0" encoding="utf-8"?>
+        buffer = b"""<?xml version="1.0" encoding="utf-8"?>
                     <svg width="10px" height="20px" viewBox="0 0 10 20"
                     xmlns="http://www.w3.org/2000/svg">
                         <rect width="100%" height="10" x="0" y="0"/>
-                    </svg>""".encode('utf-8')
+                    </svg>"""
         self.engine.convert_svg_to_png(buffer)
         expect(self.engine.extension).to_equal('.png')
 
@@ -119,7 +119,7 @@ class BaseEngineTestCase(TestCase):
     @mock.patch('thumbor.engines.cairosvg', new=None)
     @mock.patch('thumbor.engines.logger.error')
     def test_not_imported_cairosvg_failed_to_convert_svg_to_png(self, mockLogError):
-        buffer = """<svg width="10px" height="20px" viewBox="0 0 10 20"
+        buffer = b"""<svg width="10px" height="20px" viewBox="0 0 10 20"
                     xmlns="http://www.w3.org/2000/svg">
                         <rect width="100%" height="10" x="0" y="0"/>
                     </svg>"""
@@ -128,27 +128,27 @@ class BaseEngineTestCase(TestCase):
         expect(buffer).to_equal(returned_buffer)
 
     def test_can_identify_msb_tiff(self):
-        with open(join(STORAGE_PATH, 'gradient_msb_16bperchannel.tif'), 'r') as im:
+        with open(join(STORAGE_PATH, 'gradient_msb_16bperchannel.tif'), 'rb') as im:
             buffer = im.read()
         mime = self.engine.get_mimetype(buffer)
         expect(mime).to_equal('image/tiff')
 
     def test_can_identify_lsb_tiff(self):
-        with open(join(STORAGE_PATH, 'gradient_lsb_16bperchannel.tif'), 'r') as im:
+        with open(join(STORAGE_PATH, 'gradient_lsb_16bperchannel.tif'), 'rb') as im:
             buffer = im.read()
         mime = self.engine.get_mimetype(buffer)
         expect(mime).to_equal('image/tiff')
 
     def test_can_identify_svg_with_xml_namespace_other_than_w3(self):
-        buffer = """<svg width="10px" height="20px" viewBox="0 0 10 20"
+        buffer = b"""<svg width="10px" height="20px" viewBox="0 0 10 20"
                     xmlns="http://ns.foo.com/FooSVGViewerExtensions/3.0/">
                         <rect width="100%" height="10" x="0" y="0"/>
-                    </svg>""".encode('utf-8')
+                    </svg>"""
         mime = self.engine.get_mimetype(buffer)
         expect(mime).to_equal('image/svg+xml')
 
     def test_can_identify_svg_with_xml_preamble_and_lots_of_gibberish(self):
-        buffer = """<?xml version="1.0" encoding="utf-8"?>
+        buffer = b"""<?xml version="1.0" encoding="utf-8"?>
                     <!-- Generator: Proprietary Drawing Software, SVG Export Plug-In. SVG Version: 3.0.0 Build 77) -->
                     <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd" [
                         <!ENTITY ns_flows "http://ns.foo.com/Flows/1.0/">
@@ -166,12 +166,12 @@ class BaseEngineTestCase(TestCase):
                     <svg width="10px" height="20px" viewBox="0 0 10 20"
                     xmlns="http://www.w3.org/2000/svg">
                         <rect width="100%" height="10" x="0" y="0"/>
-                    </svg>""".encode('utf-8')
+                    </svg>"""
         mime = self.engine.get_mimetype(buffer)
         expect(mime).to_equal('image/svg+xml')
 
     def test_convert_svg_already_converted_to_png(self):
-        svg_buffer = """<svg width="10px" height="20px" viewBox="0 0 10 20"
+        svg_buffer = b"""<svg width="10px" height="20px" viewBox="0 0 10 20"
                     xmlns="http://www.w3.org/2000/svg">
                         <rect width="100%" height="10" x="0" y="0"/>
                     </svg>"""
@@ -181,10 +181,10 @@ class BaseEngineTestCase(TestCase):
         expect(png_buffer).to_equal(png_buffer_dupe)
 
     def test_convert_not_well_formed_svg_to_png(self):
-        buffer = """<<svg width="10px" height="20px" viewBox="0 0 10 20"
+        buffer = b"""<<svg width="10px" height="20px" viewBox="0 0 10 20"
                     xmlns="http://www.w3.org/2000/svg">
                         <rect width="100%" height="10" x="0" y="0"/>
-                    </svg>""".encode('utf-8')
+                    </svg>"""
         with expect.error_to_happen(ParseError):
             self.engine.convert_svg_to_png(buffer)
         expect(self.engine.extension).to_be_null()

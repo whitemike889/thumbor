@@ -70,33 +70,33 @@ def to_be_the_same_as(topic, expected):
 
 @create_assertions
 def to_be_similar_to(topic, expected):
-    topic_image = Image.open(StringIO(topic))
-    expected_image = Image.open(StringIO(expected))
+    topic_image = Image.open(BytesIO(topic))
+    expected_image = Image.open(BytesIO(expected))
 
     return get_ssim(topic_image, expected_image) > 0.95
 
 
 @create_assertions
 def to_be_webp(topic):
-    im = Image.open(StringIO(topic))
+    im = Image.open(BytesIO(topic))
     return im.format.lower() == 'webp'
 
 
 @create_assertions
 def to_be_png(topic):
-    im = Image.open(StringIO(topic))
+    im = Image.open(BytesIO(topic))
     return im.format.lower() == 'png'
 
 
 @create_assertions
 def to_be_gif(topic):
-    im = Image.open(StringIO(topic))
+    im = Image.open(BytesIO(topic))
     return im.format.lower() == 'gif'
 
 
 @create_assertions
 def to_be_jpeg(topic):
-    im = Image.open(StringIO(topic))
+    im = Image.open(BytesIO(topic))
     return im.format.lower() == 'jpeg'
 
 
@@ -301,5 +301,6 @@ class DetectorTestCase(PythonTestCase):
 
     def setUp(self):
         self.context = mock.Mock(request=mock.Mock(focal_points=[]))
+        self.context.config.MAX_PIXELS = 2 ** 20
         self.engine = PilEngine(self.context)
         self.context.modules.engine = self.engine

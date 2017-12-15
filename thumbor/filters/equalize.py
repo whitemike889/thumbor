@@ -17,5 +17,5 @@ class Filter(BaseFilter):
     @filter_method()
     def equalize(self):
         mode, data = self.engine.image_data_as_rgb()
-        imgdata = _equalize.apply(mode, data)
+        imgdata = _equalize.apply(mode.encode('utf-8'), data)
         self.engine.set_image_data(imgdata)

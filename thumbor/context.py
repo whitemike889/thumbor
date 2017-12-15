@@ -103,7 +103,7 @@ class ServerParameters(object):
         if not exists(path):
             raise ValueError('Could not find security key file at %s. Please verify the keypath argument.' % path)
 
-        with open(path, 'r') as f:
+        with open(path, 'rb') as f:
             security_key = f.read().strip()
 
         self.security_key = security_key

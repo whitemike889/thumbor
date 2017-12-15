@@ -17,5 +17,5 @@ class Filter(BaseFilter):
     @filter_method(BaseFilter.Number)
     def contrast(self, value):
         mode, data = self.engine.image_data_as_rgb()
-        imgdata = _contrast.apply(mode, value, data)
+        imgdata = _contrast.apply(mode.encode('utf-8'), value, data)
         self.engine.set_image_data(imgdata)

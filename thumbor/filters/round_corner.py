@@ -23,7 +23,7 @@ class Filter(BaseFilter):
 
         mode, data = self.engine.image_data_as_rgb()
         imgdata = _round_corner.apply(
-            1, mode, a_radius, b_radius, r, g, b,
+            1, mode.encode('utf-8'), a_radius, b_radius, r, g, b,
             width, height, data
         )
         self.engine.set_image_data(imgdata)

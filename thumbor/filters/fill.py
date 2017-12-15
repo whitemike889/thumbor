@@ -16,7 +16,7 @@ class Filter(BaseFilter):
 
     def get_median_color(self):
         mode, data = self.engine.image_data_as_rgb()
-        r, g, b = _fill.apply(mode, data)
+        r, g, b = _fill.apply(mode.encode('utf-8'), data)
         return '%02x%02x%02x' % (r, g, b)
 
     @filter_method(r'[\w]+', BaseFilter.Boolean)
@@ -38,8 +38,8 @@ class Filter(BaseFilter):
 
         ix, iy = self.engine.size
 
-        px = (bx - ix) / 2  # top left
-        py = (by - iy) / 2
+        px = (bx - ix) // 2  # top left
+        py = (by - iy) // 2
 
         self.fill_engine.paste(self.engine, (px, py), merge=fill_transparent)
         self.engine.image = self.fill_engine.image

@@ -27,7 +27,7 @@ class Filter(BaseFilter):
             return pos
 
         sign, ratio = match.groups()
-        pos = "{sign}{pos}".format(sign=sign, pos=int(round(length * float(ratio) / 100, 0)))
+        pos = "{sign}{pos}".format(sign=sign, pos=int(math.ceil(length * float(ratio) / 100)))
 
         return pos
 
@@ -56,7 +56,7 @@ class Filter(BaseFilter):
         self.watermark_engine.enable_alpha()
 
         mode, data = self.watermark_engine.image_data_as_rgb()
-        imgdata = _alpha.apply(mode,
+        imgdata = _alpha.apply(mode.encode('utf-8'),
                                self.alpha,
                                data)
 

@@ -37,7 +37,7 @@ class Filter(BaseFilter):
                 mode, nine_patch_mode)
             )
 
-        imgdata = _nine_patch.apply(mode,
+        imgdata = _nine_patch.apply(mode.encode('utf-8'),
                                     data,
                                     self.engine.size[0],
                                     self.engine.size[1],

@@ -17,5 +17,5 @@ class Filter(BaseFilter):
     @filter_method(BaseFilter.Number, BaseFilter.Number, BaseFilter.Number)
     def rgb(self, r, g, b):
         mode, data = self.engine.image_data_as_rgb()
-        imgdata = _rgb.apply(mode, r, g, b, data)
+        imgdata = _rgb.apply(mode.encode('utf-8'), r, g, b, data)
         self.engine.set_image_data(imgdata)

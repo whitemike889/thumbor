@@ -19,7 +19,7 @@ class Filter(BaseFilter):
         width, height = self.engine.size
         mode, data = self.engine.image_data_as_rgb()
         imgdata = _sharpen.apply(
-            mode, width, height, amount, radius,
+            mode.encode('utf-8'), width, height, amount, radius,
             luminance_only, data
         )
         self.engine.set_image_data(imgdata)

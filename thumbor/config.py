@@ -8,6 +8,7 @@
 # http://www.opensource.org/licenses/mit-license
 # Copyright (c) 2011 globo.com thumbor@googlegroups.com
 
+import six
 from os.path import expanduser, join
 import tempfile
 
@@ -15,11 +16,6 @@ import derpconf.config as config
 from derpconf.config import Config
 
 from thumbor import __version__
-
-try:
-    basestring        # Python 2
-except NameError:
-    basestring = str  # Python 3
 
 home = expanduser("~")
 
@@ -401,7 +397,7 @@ def generate_config():
 
 
 def format_value(value):
-    if isinstance(value, basestring):
+    if isinstance(value, six.string_types):
         return "'%s'" % value
     if isinstance(value, (tuple, list, set)):
         representation = '[\n'

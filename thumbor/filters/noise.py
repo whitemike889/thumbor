@@ -17,5 +17,5 @@ class Filter(BaseFilter):
     @filter_method(BaseFilter.PositiveNumber, BaseFilter.PositiveNumber)
     def noise(self, amount, seed=0):
         mode, data = self.engine.image_data_as_rgb()
-        imgdata = _noise.apply(mode, amount, data, seed)
+        imgdata = _noise.apply(mode.encode('utf-8'), amount, data, seed)
         self.engine.set_image_data(imgdata)

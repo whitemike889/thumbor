@@ -119,7 +119,7 @@ class BaseHandler(tornado.web.RequestHandler):
                 self.context.metrics.incr('result_storage.hit')
                 self.context.metrics.incr('result_storage.bytes_read', len(result))
                 logger.debug('[RESULT_STORAGE] IMAGE FOUND: %s' % req.url)
-                self.finish_request(self.context, result)
+                yield self.finish_request(self.context, result)
                 return
 
         if conf.MAX_WIDTH and (not isinstance(req.width, basestring)) and req.width > conf.MAX_WIDTH:
@@ -174,7 +174,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
             self.log_exception(*sys.exc_info())
 
-            if 'cannot identify image file' in e.message:
+            if 'cannot identify image file' in e.args:
                 logger.warning(msg)
                 self._error(400)
             else:
@@ -274,6 +274,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
         flags = ord(data[i])
         i = skip_color_table(i + 3, flags)
+        # i = skip_color_table(i + 3, data[i])
         while frames < 2:
             block = data[i]
             i += 1
@@ -380,10 +381,10 @@ class BaseHandler(tornado.web.RequestHandler):
     @gen.coroutine
     def finish_request(self, context, result_from_storage=None):
         if result_from_storage is not None:
-            self._process_result_from_storage(result_from_storage)
+            yield self._process_result_from_storage(result_from_storage)
 
             image_extension, content_type = self.define_image_type(context, result_from_storage)
-            self._write_results_to_client(context, result_from_storage, content_type)
+            yield self._write_results_to_client(context, result_from_storage, content_type)
 
             return
 
@@ -399,7 +400,7 @@ class BaseHandler(tornado.web.RequestHandler):
                 return
 
             results, content_type = future_result
-            self._write_results_to_client(context, results, content_type)
+            yield self._write_results_to_client(context, results, content_type)
 
             if should_store:
                 self._store_results(context, results)
@@ -411,6 +412,7 @@ class BaseHandler(tornado.web.RequestHandler):
             callback=inner,
         )
 
+    @gen.coroutine
     def _write_results_to_client(self, context, results, content_type):
         max_age = context.config.MAX_AGE
 
@@ -602,43 +604,38 @@ class BaseHandler(tornado.web.RequestHandler):
 
         self.context.request.extension = extension = EXTENSION.get(mime, '.jpg')
 
+        if mime == 'image/gif' and self.context.config.USE_GIFSICLE_ENGINE:
+            self.context.request.engine = self.context.modules.gif_engine
+        else:
+            self.context.request.engine = self.context.modules.engine
+
         try:
-            if mime == 'image/gif' and self.context.config.USE_GIFSICLE_ENGINE:
-                self.context.request.engine = self.context.modules.gif_engine
-            else:
-                self.context.request.engine = self.context.modules.engine
-
             self.context.request.engine.load(fetch_result.buffer, extension)
+        except Exception as e:
+            logger.exception(e)
 
-            if self.context.request.engine.image is None:
-                fetch_result.successful = False
-                fetch_result.buffer = None
-                fetch_result.engine = self.context.request.engine
-                fetch_result.engine_error = EngineResult.COULD_NOT_LOAD_IMAGE
-                raise gen.Return(fetch_result)
-
-            fetch_result.normalized = self.context.request.engine.normalize()
-
-            # Allows engine or loader to override storage on the fly for the purpose of
-            # marking a specific file as unstoreable
-            storage = self.context.modules.storage
-
-            is_no_storage = isinstance(storage, NoStorage)
-            is_mixed_storage = isinstance(storage, MixedStorage)
-            is_mixed_no_file_storage = is_mixed_storage and isinstance(storage.file_storage, NoStorage)
-
-            if not (is_no_storage or is_mixed_no_file_storage):
-                storage.put(url, fetch_result.buffer)
-
-            storage.put_crypto(url)
-        except Exception:
+        if self.context.request.engine.image is None:
             fetch_result.successful = False
-        finally:
-            if not fetch_result.successful:
-                raise
             fetch_result.buffer = None
             fetch_result.engine = self.context.request.engine
+            fetch_result.engine_error = EngineResult.COULD_NOT_LOAD_IMAGE
             raise gen.Return(fetch_result)
+
+        fetch_result.normalized = self.context.request.engine.normalize()
+
+        # Allows engine or loader to override storage on the fly for the purpose of
+        # marking a specific file as unstoreable
+        storage = self.context.modules.storage
+
+        is_no_storage = isinstance(storage, NoStorage)
+        is_mixed_storage = isinstance(storage, MixedStorage)
+        is_mixed_no_file_storage = is_mixed_storage and isinstance(storage.file_storage, NoStorage)
+
+        if not (is_no_storage or is_mixed_no_file_storage):
+            storage.put(url, fetch_result.buffer)
+
+        storage.put_crypto(url)
+        raise gen.Return(fetch_result)
 
     @gen.coroutine
     def get_blacklist_contents(self):
@@ -649,7 +646,7 @@ class BaseHandler(tornado.web.RequestHandler):
             blacklist = yield gen.maybe_future(self.context.modules.storage.get(filename))
             raise tornado.gen.Return(blacklist)
         else:
-            raise tornado.gen.Return("")
+            raise tornado.gen.Return(b"")
 
     @gen.coroutine
     def acquire_url_lock(self, url):

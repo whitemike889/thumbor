@@ -55,7 +55,7 @@ class ImagingHandler(ContextHandler):
 
         if self.context.config.USE_BLACKLIST:
             blacklist = yield self.get_blacklist_contents()
-            if self.context.request.image_url in blacklist:
+            if self.context.request.image_url.encode('utf-8') in blacklist:
                 self._error(400, 'Source image url has been blacklisted: %s' % self.context.request.image_url)
                 return
 
@@ -72,7 +72,7 @@ class ImagingHandler(ContextHandler):
             url_to_validate = url.replace('/%s/' % self.context.request.hash, '') \
                 .replace('/%s/' % quoted_hash, '')
 
-            valid = signer.validate(unquote(url_signature), url_to_validate)
+            valid = signer.validate(unquote(url_signature).encode('utf-8'), url_to_validate)
 
             if not valid and self.context.config.STORES_CRYPTO_KEY_FOR_EACH_IMAGE:
                 # Retrieves security key for this image if it has been seen before

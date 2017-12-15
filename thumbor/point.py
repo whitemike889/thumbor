@@ -50,8 +50,8 @@ class FocalPoint(object):
 
     @classmethod
     def from_square(cls, x, y, width, height, origin='detection'):
-        center_x = x + (width / 2)
-        center_y = y + (height / 2)
+        center_x = x + (width // 2)
+        center_y = y + (height // 2)
         return cls(center_x, center_y, height=height, width=width, weight=width * height, origin=origin)
 
     @classmethod

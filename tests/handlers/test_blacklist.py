@@ -38,18 +38,18 @@ class BlacklistHandlerTestCase(TestCase):
     def test_can_get_blacklist(self):
         response = self.fetch('/blacklist')
         expect(response.code).to_equal(200)
-        expect(response.body).to_equal("")
+        expect(response.body).to_equal(b"")
 
     def test_can_put_object_to_blacklist(self):
         response = self.fetch('/blacklist?blocked.jpg', method='PUT', body='')
         expect(response.code).to_equal(200)
-        expect(response.body).to_equal("")
+        expect(response.body).to_equal(b"")
 
     def test_can_read_updated_blacklist(self):
         self.fetch('/blacklist?blocked.jpg', method='PUT', body='')
         response = self.fetch('/blacklist')
         expect(response.code).to_equal(200)
-        expect("blocked.jpg\n" in response.body).to_equal(True)
+        expect(b"blocked.jpg\n" in response.body).to_equal(True)
 
     def test_cant_get_blacklisted_image(self):
         response = self.fetch('/unsafe/image.jpg')

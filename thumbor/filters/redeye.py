@@ -90,6 +90,9 @@ class Filter(BaseFilter):
                 mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_DILATE, (5, 5)))
                 mask = cv2.dilate(mask, (3, 3), iterations=3)
 
+                # for python 3 compatibility, we need to parse to numpy.uint8 all items of mean
+                mean = mean.astype(np.uint8)
+
                 # The information of only red color is lost,
                 # So we fill the mean of blue and green color in all three channels(BGR) to maintain the texture
                 # Fill this black mean value to masked image
