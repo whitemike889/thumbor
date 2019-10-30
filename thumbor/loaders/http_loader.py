@@ -28,8 +28,10 @@ def encode_url(url):
 
 
 def quote_url(url):
-    return encode_url(unquote(url).decode('utf-8'))
-
+    try:
+        return encode_url(unquote(url).decode('utf-8')) # Python 2
+    except AttributeError:
+        return encode_url(unquote(url)) # Python 3
 
 def _normalize_url(url):
     url = quote_url(url)

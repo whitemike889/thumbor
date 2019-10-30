@@ -91,8 +91,8 @@ class ServerParameters(object):
 
     @security_key.setter
     def security_key(self, key):
-        if isinstance(key, unicode):
-            key = key.encode('utf-8')
+        # if isinstance(key, unicode):
+            # key = key.encode('utf-8')
         self._security_key = key
 
     def load_security_key(self):

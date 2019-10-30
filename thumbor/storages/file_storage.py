@@ -86,7 +86,7 @@ class Storage(storages.BaseStorage):
             if not resource_available:
                 callback(None)
             else:
-                with open(self.path_on_filesystem(path), 'r') as f:
+                with open(self.path_on_filesystem(path), 'rb') as f:
                     callback(f.read())
 
         self.exists(None, file_exists, path_on_filesystem=abs_path)

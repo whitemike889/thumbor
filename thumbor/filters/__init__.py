@@ -31,7 +31,8 @@ def filter_method(*args, **kwargs):
             'name': fn.__name__,
             'params': args,
             'defaults': defaults,
-            'async': kwargs.get('async', False)
+            'async': kwargs.get('async', False),
+            'asynchronous': kwargs.get('async', False)
         }
         return wrapper
     return _filter_deco
@@ -130,7 +131,7 @@ class BaseFilter(object):
         cls.runnable_method = meths[0]
         filter_data = cls.runnable_method.filter_data
 
-        cls.async_filter = filter_data['async']
+        cls.async_filter = filter_data['async'] or filter_data['asynchronous']
         cls.compile_regex(filter_data)
         return filter_data['name']
 

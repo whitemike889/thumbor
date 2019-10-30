@@ -159,7 +159,7 @@ class Filter(BaseFilter):
         BaseFilter.PositiveNumber,
         r'(?:-?\d+)|none',
         r'(?:-?\d+)|none',
-        async=True
+        asynchronous=True
     )
     def watermark(self, callback, url, x, y, alpha, w_ratio=False, h_ratio=False):
         self.url = url

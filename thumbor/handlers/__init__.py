@@ -653,7 +653,7 @@ class BaseHandler(tornado.web.RequestHandler):
             fetch_result.successful = False
         finally:
             if not fetch_result.successful:
-                raise
+                raise gen.Return(fetch_result)
             fetch_result.buffer = None
             fetch_result.engine = self.context.request.engine
             raise gen.Return(fetch_result)
