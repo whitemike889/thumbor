@@ -336,7 +336,7 @@ class Engine(BaseEngine):
                 converted_image = converted_image.convert('RGB')
         if update_image:
             self.image = converted_image
-        return converted_image.mode, converted_image.tobytes()
+        return converted_image.mode.encode(), converted_image.tobytes()
 
     def convert_to_grayscale(self, update_image=True, with_alpha=True):
         if 'A' in self.image.mode and with_alpha:
