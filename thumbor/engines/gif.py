@@ -18,8 +18,8 @@ from thumbor.engines.pil import Engine as PILEngine
 from thumbor.utils import logger
 
 
-GIFSICLE_SIZE_REGEX = re.compile(r'(?:logical\sscreen\s(\d+x\d+))')
-GIFSICLE_IMAGE_COUNT_REGEX = re.compile(r'(?:(\d+)\simage)')
+GIFSICLE_SIZE_REGEX = re.compile(rb'(?:logical\sscreen\s(\d+x\d+))')
+GIFSICLE_IMAGE_COUNT_REGEX = re.compile(rb'(?:(\d+)\simage)')
 
 
 class GifSicleError(RuntimeError):
@@ -57,8 +57,9 @@ class Engine(PILEngine):
         self._is_multiple = False
 
         result = self.run_gifsicle('--info')
+        print(result)
         size = GIFSICLE_SIZE_REGEX.search(result)
-        self.image_size = size.groups()[0].split('x')
+        self.image_size = size.groups()[0].split(b'x')
         self.image_size[0], self.image_size[1] = int(self.image_size[0]), int(self.image_size[1])
 
         count = GIFSICLE_IMAGE_COUNT_REGEX.search(result)
