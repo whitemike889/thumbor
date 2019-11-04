@@ -31,8 +31,7 @@ class Storage(storages.BaseStorage):
         logger.debug('creating tempfile for %s in %s...' % (path, temp_abspath))
 
         self.ensure_dir(file_dir_abspath)
-
-        with open(temp_abspath, 'w') as _file:
+        with open(temp_abspath, 'wb') as _file:
             _file.write(bytes)
 
         logger.debug('moving tempfile %s to %s...' % (temp_abspath, file_abspath))
