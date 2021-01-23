@@ -726,6 +726,34 @@ Config.define(
 )
 
 
+# COMPATIBILITY
+
+Config.define(
+    "COMPATIBILITY_LEGACY_LOADER",
+    None,
+    "Loader that will be used with the compatibility layer, instead of the "
+    "compatibility loader. Please only use this if you can't use up-to-date loaders.",
+    "Compatibility",
+)
+
+Config.define(
+    "COMPATIBILITY_LEGACY_STORAGE",
+    None,
+    "Storage that will be used with the compatibility layer, instead of the "
+    "compatibility storage. Please only use this if you can't use up-to-date storages.",
+    "Compatibility",
+)
+
+Config.define(
+    "COMPATIBILITY_LEGACY_RESULT_STORAGE",
+    None,
+    "Result Storage that will be used with the compatibility layer, instead of the "
+    "compatibility result storage. Please only use this if you can't use "
+    "up-to-date result storages.",
+    "Compatibility",
+)
+
+
 def generate_config():
     config.generate_config()
 

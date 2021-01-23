@@ -40,6 +40,9 @@ class Importer:  # pylint: disable=too-many-instance-attributes
         self.handler_lists = []
         self.error_handler_module = None
         self.error_handler_class = None
+        self.compatibility_legacy_loader = None
+        self.compatibility_legacy_storage = None
+        self.compatibility_legacy_result_storage = None
 
     @staticmethod
     def import_class(name, get_module=False, validate_fn=None):
@@ -81,6 +84,15 @@ class Importer:  # pylint: disable=too-many-instance-attributes
         if self.config.USE_CUSTOM_ERROR_HANDLING:
             self.import_item("ERROR_HANDLER_MODULE", "ErrorHandler")
             self.error_handler_class = self.error_handler_module
+
+        if self.config.COMPATIBILITY_LEGACY_LOADER:
+            self.import_item("COMPATIBILITY_LEGACY_LOADER")
+
+        if self.config.COMPATIBILITY_LEGACY_STORAGE:
+            self.import_item("COMPATIBILITY_LEGACY_STORAGE", "Storage")
+
+        if self.config.COMPATIBILITY_LEGACY_RESULT_STORAGE:
+            self.import_item("COMPATIBILITY_LEGACY_RESULT_STORAGE", "Storage")
 
     def import_item(
         self,
